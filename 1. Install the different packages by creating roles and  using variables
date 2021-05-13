@@ -20,6 +20,23 @@ become_user=root
 become_method=sudo
 become_ask_pass=false
 
+# inventory
+[dev]
+node1.lw.example.com
+
+[test]
+node2
+
+[prod]
+node3.lw.example.com
+
+
+[balancer]
+node4.lw.example.com
+
+[webservers:childern]
+prod.lw.example.com
+
 # Role- role1
 # vars file for role1
 soft1: mariadb
