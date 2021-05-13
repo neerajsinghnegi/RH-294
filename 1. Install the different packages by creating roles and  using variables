@@ -1,0 +1,48 @@
+1. Install the different packages by creating roles and  using variables.
+	- mariadb
+	- php
+	- vsftpd
+Where mariadb should be only installed on node1.lw.com and the remaining packages should be installed on node2.lw.com .
+
+
+ansible-galaxy init role1
+
+# ansible.cfg
+[defaults]
+inventory = inventory
+roles_path=./roles
+host_key_checking=false
+ask_pass=false
+
+[privilege_escalation]
+become=true
+become_user=root
+become_method=sudo
+become_ask_pass=false
+
+# Role- role1
+# vars file for role1
+soft1: mariadb
+soft2:
+        - php
+        - vsftpd
+
+# tasks file for role1
+- name: installing mariadb
+  yum:
+    name: "{{ soft1 }}"
+    state: present
+
+  when: inventory_hostname in groups['dev']
+
+- name: installing vsftpd and php
+  yum:
+          name: "{{ item }}"
+          state: present
+  loop: "{{ soft2 }}"
+  when: inventory_hostname in groups['prod']
+  
+# ansible-playbook
+- hosts: all
+  roles:
+        - role1
